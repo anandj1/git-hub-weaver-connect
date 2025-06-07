@@ -22,7 +22,6 @@ pytz
 requests
 scipy
 six
-sklearn
 sqlparse
 threadpoolctl
 toml
