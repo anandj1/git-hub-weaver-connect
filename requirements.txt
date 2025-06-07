@@ -7,4 +7,25 @@ whitenoise==6.9.0
 gunicorn==23.0.0
 google-generativeai==0.8.3
 scikit-learn
+pandas
+numpy
+asgiref
+autopep8
+certifi
+charset-normalizer
+idna
+joblib
+pycodestyle
+pygame
+python-dateutil
+pytz
+requests
+scipy
+six
+sklearn
+sqlparse
+threadpoolctl
+toml
+typing_extensions
+urllib3
 
