@@ -1,0 +1,446 @@
+
+{% extends 'layouts/student.html' %}
+{% load static %}
+{% block content %}
+<style>
+    /* Enhanced Game UI Styles */
+    .games-container {
+        padding: 2rem 0;
+    }
+    
+    .games-header {
+        position: relative;
+        padding: 2rem 0;
+        margin-bottom: 3rem;
+        text-align: center;
+        background: linear-gradient(135deg, #4e73df, #224abe);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .games-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('{% static "img/pattern.png" %}') repeat;
+        opacity: 0.1;
+    }
+    
+    .games-header h2, .games-header p {
+        position: relative;
+        z-index: 1;
+        color: white;
+    }
+    
+    .game-card {
+        transition: all 0.4s ease;
+        border-radius: 20px;
+        border: none;
+        overflow: hidden;
+        background: linear-gradient(145deg, #ffffff, #f3f4f6);
+        height: 100%;
+    }
+
+    .game-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+    }
+    
+    .game-difficulty {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        font-size: 0.8rem;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    
+    .difficulty-easy {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .difficulty-medium {
+        background-color: #ffc107;
+        color: #343a40;
+    }
+    
+    .difficulty-hard {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .game-icon {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #f3f4f6, #ffffff);
+        box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+    
+    .game-icon i {
+        font-size: 3.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .game-card:hover .game-icon {
+        transform: rotateY(180deg);
+    }
+    
+    .game-card:hover .game-icon i {
+        transform: rotateY(180deg);
+    }
+    
+    .pulse-animation {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .pulse-animation::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.3);
+        transform: translate(-50%, -50%);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            width: 0;
+            height: 0;
+            opacity: 0.5;
+        }
+        100% {
+            width: 300px;
+            height: 300px;
+            opacity: 0;
+        }
+    }
+    
+    .game-badge {
+        position: absolute;
+        top: -10px;
+        right: 20px;
+        z-index: 10;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+        100% { transform: translateY(0px); }
+    }
+    
+    .feature-list {
+        margin: 1.5rem 0;
+        padding: 0;
+    }
+    
+    .feature-list li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .feature-list i {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        border-radius: 50%;
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        padding: 2rem;
+    }
+    
+    .leaderboard-container {
+        margin-top: 5rem;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .leaderboard-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+    }
+    
+    .leaderboard-header::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 2px;
+        background-color: rgba(255,255,255,0.3);
+    }
+    
+    .leaderboard-header h4 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .leaderboard-header i {
+        margin-right: 10px;
+        font-size: 1.5rem;
+    }
+    
+    .leaderboard-tabs {
+        background-color: #f8f9fc;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .leaderboard-table {
+        margin-bottom: 0;
+    }
+    
+    .leaderboard-table th {
+        background-color: #f1f3f9;
+        color: #5a5c69;
+        font-weight: 600;
+        border: none;
+    }
+    
+    .animate-row {
+        animation: fadeIn 0.8s ease-out;
+        background-color: transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .animate-row:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+        transform: translateX(5px);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .badge {
+        padding: 0.5em 0.8em;
+        font-weight: 600;
+    }
+    
+    .rank-1 {
+        background: linear-gradient(45deg, #FFD700, #FFA500);
+        color: #343a40;
+        box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+    }
+    
+    .rank-2 {
+        background: linear-gradient(45deg, #C0C0C0, #A9A9A9);
+        color: #343a40;
+        box-shadow: 0 2px 10px rgba(192, 192, 192, 0.4);
+    }
+    
+    .rank-3 {
+        background: linear-gradient(45deg, #CD7F32, #A0522D);
+        color: white;
+        box-shadow: 0 2px 10px rgba(205, 127, 50, 0.4);
+    }
+    
+    .player-score {
+        font-weight: 700;
+        color: #4e73df;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+        .game-card {
+            margin-bottom: 2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .games-header {
+            padding: 1.5rem 0;
+        }
+        
+        .game-icon {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .game-icon i {
+            font-size: 2.5rem;
+        }
+    }
+</style>
+
+<div class="container games-container">
+    <!-- Games Header Section -->
+    <div class="games-header shadow mb-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="display-4 fw-bold mb-3">Educational Games Arena</h2>
+                <p class="lead mb-3">Challenge yourself, compete with peers, and earn achievement badges!</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <span class="badge bg-success px-3 py-2">Learn</span>
+                    <span class="badge bg-primary px-3 py-2">Play</span>
+                    <span class="badge bg-warning px-3 py-2">Earn</span>
+                    <span class="badge bg-danger px-3 py-2">Master</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Memory Puzzle Game Card -->
+        <div class="col-md-4">
+            <div class="card game-card shadow-lg h-100">
+                <div class="card-body position-relative">
+                    <span class="game-difficulty difficulty-easy">Easy</span>
+                    <span class="game-badge bg-primary">Popular! 🌟</span>
+                    <div class="game-icon mb-4">
+                        <i class="bx bx-brain text-primary"></i>
+                    </div>
+                    <h4 class="card-title text-center mb-3">Memory Challenge</h4>
+                    <div class="card-text text-center mb-4">
+                        <p>Test and improve your memory skills with our adaptive puzzle game. Match pairs of cards to score points and unlock achievements!</p>
+                        <ul class="feature-list">
+                            <li><i class="bx bx-check"></i>3 difficulty levels</li>
+                            <li><i class="bx bx-check"></i>Score tracking system</li>
+                            <li><i class="bx bx-check"></i>Unlockable achievements</li>
+                            <li><i class="bx bx-check"></i>Adaptive difficulty</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto">
+                        <form action="{% url 'games-memory-puzzle' %}" method="post" class="text-center">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-lg w-100 pulse-animation">
+                                <i class="bx bx-play-circle me-2"></i>Start Challenge
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Coding Challenge Card -->
+        <div class="col-md-4">
+            <div class="card game-card shadow-lg h-100">
+                <div class="card-body position-relative">
+                    <span class="game-difficulty difficulty-medium">Medium</span>
+                    <span class="game-badge bg-danger">Hot! 🔥</span>
+                    <div class="game-icon mb-4">
+                        <i class="bx bx-code-alt text-danger"></i>
+                    </div>
+                    <h4 class="card-title text-center mb-3">AI Coding Challenge</h4>
+                    <div class="card-text text-center mb-4">
+                        <p>Master programming concepts with our intelligent coding quiz that adapts to your skill level and provides personalized learning paths!</p>
+                        <ul class="feature-list">
+                            <li><i class="bx bx-check"></i>AI-powered questions</li>
+                            <li><i class="bx bx-check"></i>Real-time feedback</li>
+                            <li><i class="bx bx-check"></i>Progress tracking</li>
+                            <li><i class="bx bx-check"></i>Skill assessment</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto">
+                        <form action="{% url 'games-hangman' %}" method="post" class="text-center">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg w-100 pulse-animation">
+                                <i class="bx bx-code me-2"></i>Start Coding
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MySQL Challenge Card -->
+        <div class="col-md-4">
+            <div class="card game-card shadow-lg h-100">
+                <div class="card-body position-relative">
+                    <span class="game-difficulty difficulty-hard">Hard</span>
+                    <span class="game-badge bg-info">New! 🚀</span>
+                    <div class="game-icon mb-4">
+                        <i class="bx bx-data text-info"></i>
+                    </div>
+                    <h4 class="card-title text-center mb-3">MySQL Challenge</h4>
+                    <div class="card-text text-center mb-4">
+                        <p>Strengthen your database skills with our interactive MySQL quiz featuring adaptive difficulty and comprehensive query challenges!</p>
+                        <ul class="feature-list">
+                            <li><i class="bx bx-check"></i>Database knowledge tests</li>
+                            <li><i class="bx bx-check"></i>Query optimization</li>
+                            <li><i class="bx bx-check"></i>Performance metrics</li>
+                            <li><i class="bx bx-check"></i>Skill certification</li>
+                        </ul>
+                    </div>
+                    <div class="mt-auto">
+                        <form action="{% url 'games-keyboardjunp' %}" method="post" class="text-center">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-info text-white btn-lg w-100 pulse-animation">
+                                <i class="bx bx-table me-2"></i>Start MySQL
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+   
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap tabs
+        var tabEl = document.querySelector('button[data-bs-toggle="tab"]')
+        tabEl.addEventListener('shown.bs.tab', function (event) {
+            // Animation for tab content
+            event.target.classList.add('animate-tab');
+            setTimeout(() => {
+                event.target.classList.remove('animate-tab');
+            }, 500);
+        })
+        
+        // Animate game cards on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+        
+        document.querySelectorAll('.game-card').forEach(card => {
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

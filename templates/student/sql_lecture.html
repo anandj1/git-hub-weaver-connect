@@ -1,0 +1,281 @@
+
+{% extends 'layouts/student.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .video-container {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    
+    .video-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+    }
+    
+    .lecture-nav {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        position: sticky;
+        top: 100px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .lecture-link {
+        display: block;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        transition: all 0.2s ease;
+    }
+    
+    .lecture-link:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .lecture-link.active {
+        background: #36b9cc;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .lecture-title {
+        background: linear-gradient(90deg, #36b9cc, #1cc88a);
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .download-btn {
+        transition: all 0.3s ease;
+    }
+    
+    .download-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="lecture-title">
+                <h2 class="mb-0">SQL Lectures</h2>
+                <p class="lead mb-0">Master database management with SQL from basics to advanced queries</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Lecture Navigation Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="lecture-nav">
+                <h5 class="mb-3 text-info">
+                    <i class='bx bx-list-ul me-2'></i> Lecture Index
+                </h5>
+                <hr>
+                <a href="#lecture0" class="lecture-link active" data-bs-toggle="tooltip" title="Introduction to SQL">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 0: Introduction
+                </a>
+                <a href="#lecture1" class="lecture-link" data-bs-toggle="tooltip" title="SQL Basics">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 1: Basic Queries
+                </a>
+                <a href="#lecture2" class="lecture-link" data-bs-toggle="tooltip" title="Advanced SQL">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 2: Advanced Queries
+                </a>
+                <a href="#lecture3" class="lecture-link" data-bs-toggle="tooltip" title="Database Design">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 3: Database Design
+                </a>
+                <a href="#lecture4" class="lecture-link" data-bs-toggle="tooltip" title="SQL Transactions">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 4: Transactions
+                </a>
+                
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">Course Materials</h6>
+                    <a href="#" class="btn btn-sm btn-outline-info w-100 mb-2">
+                        <i class='bx bx-download me-2'></i> SQL Cheat Sheet
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary w-100">
+                        <i class='bx bx-file me-2'></i> Practice Exercises
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lecture Content -->
+        <div class="col-lg-9">
+            <!-- Lecture 0 -->
+            <div id="lecture0" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">Lecture 0: Introduction to SQL</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Welcome to the SQL course. This lecture introduces SQL, relational databases, and the importance of data management.</p>
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/SQL/SQL_Lectures_0.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-info mb-2">Beginner</span>
+                                <span class="badge bg-secondary mb-2">45 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/SQL/SQL_Lectures_0.mp4' %}" class="btn btn-info download-btn text-white" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 1 -->
+            <div id="lecture1" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">Lecture 1: Basic SQL Queries</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Learn the fundamental SQL queries including SELECT, INSERT, UPDATE, and DELETE with practical examples.</p>
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/SQL/SQL_Lectures_1.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-info mb-2">Beginner</span>
+                                <span class="badge bg-secondary mb-2">50 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/SQL/SQL_Lectures_1.mp4' %}" class="btn btn-info download-btn text-white" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 2 -->
+            <div id="lecture2" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">Lecture 2: Advanced SQL Queries</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Master advanced SQL concepts including joins, subqueries, aggregations, and window functions.</p>
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/SQL/SQL_Lectures_2.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-warning mb-2">Intermediate</span>
+                                <span class="badge bg-secondary mb-2">55 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/SQL/SQL_Lectures_2.mp4' %}" class="btn btn-info download-btn text-white" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 3 (New) -->
+            <div id="lecture3" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">Lecture 3: Database Design Principles</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Learn about database design principles, normalization, entity-relationship modeling, and schema design best practices.</p>
+                        <div class="alert alert-info">
+                            <i class='bx bx-info-circle me-2'></i>
+                            This lecture will be available soon. Check back for updates!
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-warning mb-2">Intermediate</span>
+                                <span class="badge bg-secondary mb-2">60 minutes</span>
+                            </div>
+                            <button class="btn btn-secondary download-btn" disabled>
+                                <i class='bx bx-time me-2'></i> Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 4 (New) -->
+            <div id="lecture4" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0">Lecture 4: Transactions and Concurrency</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-3">Understand SQL transactions, ACID properties, concurrency control, and managing database integrity.</p>
+                        <div class="alert alert-info">
+                            <i class='bx bx-info-circle me-2'></i>
+                            This lecture will be available soon. Check back for updates!
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-danger mb-2">Advanced</span>
+                                <span class="badge bg-secondary mb-2">65 minutes</span>
+                            </div>
+                            <button class="btn btn-secondary download-btn" disabled>
+                                <i class='bx bx-time me-2'></i> Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle active class on navigation links
+    document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('.lecture-link');
+        
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Update active link based on scroll position
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('[id^="lecture"]');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                if (window.pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

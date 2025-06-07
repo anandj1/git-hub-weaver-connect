@@ -1,0 +1,376 @@
+
+{% extends 'layouts/staff.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+    
+    .table th {
+        background-color: #4e73df;
+        color: white;
+    }
+    
+    .status-badge {
+        padding: 8px 12px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+    
+    .status-badge-present {
+        background-color: #1cc88a;
+        color: white;
+    }
+    
+    .status-badge-absent {
+        background-color: #e74a3b;
+        color: white;
+    }
+    
+    .status-badge-leave {
+        background-color: #f6c23e;
+        color: #6e5918;
+    }
+    
+    .action-btn {
+        border-radius: 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .student-card {
+        border-radius: 10px;
+        transition: all 0.3s;
+        overflow: hidden;
+    }
+    
+    .student-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .search-box {
+        border-radius: 30px;
+        padding: 10px 20px;
+        border: 2px solid #eaecf4;
+        transition: all 0.3s;
+    }
+    
+    .search-box:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    
+    .filter-dropdown {
+        border-radius: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ title }}</h1>
+        <div class="d-flex">
+            <div class="dropdown me-2">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class='bx bx-filter-alt me-2'></i> Filter
+                </button>
+                <ul class="dropdown-menu filter-dropdown" aria-labelledby="filterDropdown">
+                    <li><a class="dropdown-item" href="#">All Students</a></li>
+                    <li><a class="dropdown-item" href="#">Not Marked</a></li>
+                    <li><a class="dropdown-item" href="#">Present</a></li>
+                    <li><a class="dropdown-item" href="#">Absent</a></li>
+                    <li><a class="dropdown-item" href="#">On Leave</a></li>
+                </ul>
+            </div>
+            <form class="d-none d-sm-inline-block form-inline ml-md-3 my-md-0 mw-100">
+                <div class="input-group">
+                    <input type="text" class="form-control search-box bg-light border-0 small" placeholder="Search student..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">
+                            <i class='bx bx-search'></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm student-card">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Attendance Tracking</h6>
+            <div class="dropdown no-arrow">
+                <button class="btn btn-sm btn-outline-primary" id="markAllBtn">
+                    <i class='bx bx-check-double me-1'></i> Mark All Present
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Enrollment</th>
+                            <th>Roll No</th>
+                            <th>Coins</th>
+                            <th class="text-center">Attendance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for x in students %}
+                        <tr data-student-id="{{ x.id }}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-placeholder me-2 rounded-circle bg-primary text-white" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                        {{ x.student_profile.name|first }}
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">{{ x.student_profile.name }}</h6>
+                                        <small class="text-muted">{{ x.student.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ x.student.enrollment }}</td>
+                            <td>{{ x.student.rollno }}</td>
+                            <td>
+                                <span class="badge bg-warning text-dark">{{ x.coin }}</span>
+                            </td>
+                            <td>
+                                {% if x.status == 'NA' %}
+                                <div class="d-flex justify-content-center action-buttons">
+                                    <form action="{% url 'st-att-conduct-present' x.id %}" method="post" class="me-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success action-btn btn-attendance" data-status="present">
+                                            <i class='bx bx-check me-1'></i> Present
+                                        </button>
+                                    </form>
+                                    <form action="{% url 'st-att-conduct-absent' x.id %}" method="post" class="me-2">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger action-btn btn-attendance" data-status="absent">
+                                            <i class='bx bx-x me-1'></i> Absent
+                                        </button>
+                                    </form>
+                                    <form action="{% url 'st-att-conduct-leave' x.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-warning action-btn btn-attendance" data-status="leave">
+                                            <i class='bx bx-time me-1'></i> Leave
+                                        </button>
+                                    </form>
+                                </div>
+                                {% else %}
+                                <div class="text-center">
+                                    {% if x.status == 'Present' %}
+                                        <span class="status-badge status-badge-present">
+                                            <i class='bx bx-check-circle me-1'></i> Present
+                                        </span>
+                                    {% elif x.status == 'Absent' %}
+                                        <span class="status-badge status-badge-absent">
+                                            <i class='bx bx-x-circle me-1'></i> Absent
+                                        </span>
+                                    {% else %}
+                                        <span class="status-badge status-badge-leave">
+                                            <i class='bx bx-time-five me-1'></i> Leave
+                                        </span>
+                                    {% endif %}
+                                    
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-outline-secondary change-status-btn" data-student-id="{{ x.id }}">
+                                            <i class='bx bx-edit me-1'></i> Change
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Attendance Summary Card -->
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Attendance Summary</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <span id="markedCount">0</span>/<span id="totalCount">{{ students|length }}</span> Students
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class='bx bx-user-check fa-2x text-gray-300'></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Present Rate Card -->
+        <div class="col-xl-6 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Present Rate</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><span id="presentPercent">0</span>%</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div id="presentProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class='bx bx-chart fa-2x text-gray-300'></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get CSRF token for AJAX requests
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        
+        // Search functionality
+        const searchBox = document.querySelector('.search-box');
+        if (searchBox) {
+            searchBox.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const studentName = row.querySelector('h6') ? row.querySelector('h6').textContent.toLowerCase() : '';
+                    const studentEmail = row.querySelector('small') ? row.querySelector('small').textContent.toLowerCase() : '';
+                    const studentEnrollment = row.querySelector('td:nth-child(2)') ? row.querySelector('td:nth-child(2)').textContent.toLowerCase() : '';
+                    
+                    if (studentName.includes(searchTerm) || 
+                        studentEmail.includes(searchTerm) || 
+                        studentEnrollment.includes(searchTerm)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Mark All Present Button
+        const markAllBtn = document.getElementById('markAllBtn');
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to mark all students present?')) {
+                    const presentButtons = document.querySelectorAll('.btn-attendance[data-status="present"]');
+                    presentButtons.forEach((button, index) => {
+                        // Stagger form submissions to prevent overwhelming the server
+                        setTimeout(() => {
+                            const form = button.closest('form');
+                            if (form) form.submit();
+                        }, index * 200);
+                    });
+                }
+            });
+        }
+        
+        // Change Status Buttons
+        const changeStatusBtns = document.querySelectorAll('.change-status-btn');
+        changeStatusBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const studentId = this.getAttribute('data-student-id');
+                const row = this.closest('tr');
+                const statusCell = this.closest('td');
+                
+                // Show action buttons again with CSRF token
+                statusCell.innerHTML = `
+                    <div class="d-flex justify-content-center action-buttons">
+                        <form action="{% url 'st-att-conduct-present' 0 %}".replace('0', studentId) method="post" class="me-2">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                            <button type="submit" class="btn btn-success action-btn btn-attendance" data-status="present">
+                                <i class='bx bx-check me-1'></i> Present
+                            </button>
+                        </form>
+                        <form action="{% url 'st-att-conduct-absent' 0 %}".replace('0', studentId) method="post" class="me-2">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                            <button type="submit" class="btn btn-danger action-btn btn-attendance" data-status="absent">
+                                <i class='bx bx-x me-1'></i> Absent
+                            </button>
+                        </form>
+                        <form action="{% url 'st-att-conduct-leave' 0 %}".replace('0', studentId) method="post">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="${csrftoken}">
+                            <button type="submit" class="btn btn-warning action-btn btn-attendance" data-status="leave">
+                                <i class='bx bx-time me-1'></i> Leave
+                            </button>
+                        </form>
+                    </div>
+                `;
+            });
+        });
+        
+        // Update attendance summary on page load
+        updateAttendanceSummary();
+        
+        function updateAttendanceSummary() {
+            const totalCount = document.querySelectorAll('tbody tr').length;
+            const markedCount = document.querySelectorAll('tbody tr .status-badge').length;
+            const presentCount = document.querySelectorAll('tbody tr .status-badge-present').length;
+            
+            const totalCountEl = document.getElementById('totalCount');
+            const markedCountEl = document.getElementById('markedCount');
+            const presentPercentEl = document.getElementById('presentPercent');
+            const presentProgressEl = document.getElementById('presentProgress');
+            
+            if (totalCountEl) totalCountEl.textContent = totalCount;
+            if (markedCountEl) markedCountEl.textContent = markedCount;
+            
+            const presentPercent = totalCount > 0 ? Math.round((presentCount / totalCount) * 100) : 0;
+            if (presentPercentEl) presentPercentEl.textContent = presentPercent;
+            if (presentProgressEl) {
+                presentProgressEl.style.width = presentPercent + '%';
+                presentProgressEl.setAttribute('aria-valuenow', presentPercent);
+            }
+        }
+        
+        // Add CSRF token to all AJAX requests
+        XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+            this.origOpen.apply(this, arguments);
+            this.setRequestHeader('X-CSRFToken', csrftoken);
+        };
+    });
+</script>
+{% endblock %}

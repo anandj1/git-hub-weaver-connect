@@ -1,0 +1,438 @@
+{% extends 'layouts/student.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .lecture-card {
+        transition: all 0.3s ease-in-out;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .lecture-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    .btn-custom {
+        border-radius: 30px;
+        font-weight: 600;
+        padding: 10px 20px;
+    }
+    .course-img {
+        height: 160px;
+        object-fit: cover;
+    }
+    .course-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .category-header {
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        padding: 15px 20px;
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    
+    .category-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('{% static "img/pattern.png" %}') repeat;
+        opacity: 0.1;
+        border-radius: 10px;
+    }
+    
+    .category-header h3 {
+        margin: 0;
+        font-weight: 700;
+        position: relative;
+    }
+    
+    .category-header p {
+        margin: 5px 0 0;
+        opacity: 0.9;
+        position: relative;
+    }
+    
+    .card-badge {
+        position: absolute;
+        top: -10px;
+        right: 10px;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 2;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-badge.featured {
+        background: linear-gradient(45deg, #FF9800, #FF5722);
+        color: white;
+    }
+    
+    .card-badge.new {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        color: white;
+    }
+    
+    .lecture-card {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    
+    .difficulty-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 2;
+    }
+
+    .difficulty-badge.beginner {
+        background: linear-gradient(45deg, #4CAF50, #8BC34A);
+        color: white;
+    }
+
+    .difficulty-badge.intermediate {
+        background: linear-gradient(45deg, #FF9800, #FF5722);
+        color: white;
+    }
+
+    .difficulty-badge.advanced {
+        background: linear-gradient(45deg, #E91E63, #9C27B0);
+        color: white;
+    }
+
+    .lecture-stats {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .lecture-stats i {
+        margin-right: 5px;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .category-header {
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .materials-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    .material-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        margin: 5px 0;
+        background: white;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .material-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .material-icon {
+        font-size: 1.5em;
+        margin-right: 15px;
+        color: #3498db;
+    }
+</style>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-12 text-center">
+            <h2 class="display-4 text-primary fw-bold mb-3">{{ title }}</h2>
+            <p class="lead">Explore our comprehensive library of educational content with downloadable materials</p>
+            <hr class="my-4">
+            
+            <!-- Filter controls -->
+            <div class="mb-4">
+                <div class="d-flex justify-content-center">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active filter-btn" data-filter="all">All Courses</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="python">Python</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="sql">SQL</button>
+                        <button type="button" class="btn btn-outline-primary filter-btn" data-filter="web">Web Dev</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if enrolled_events %}
+            <div class="col-md-12 mb-4">
+                <div class="alert alert-info rounded-3 shadow-sm p-4">
+                    <div class="d-flex align-items-center">
+                        <i class='bx bx-book-open fs-1 me-3'></i>
+                        <div>
+                            <h4 class="mb-1">Available Lectures & Materials</h4>
+                            <p class="mb-0">Access lectures, download materials, and practice exercises for all your enrolled courses!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Programming Category -->
+            <div class="col-12 mb-4">
+                <div class="category-header">
+                    <h3><i class='bx bx-code-alt me-2'></i> Programming Courses</h3>
+                    <p>Learn programming languages and software development with comprehensive materials</p>
+                </div>
+            </div>
+
+            {% for event in enrolled_events %}
+                {% if "Python" in event.title or "python" in event.title or "SQL" in event.title or "sql" in event.title or "Web Dev" in event.title or "WEB DEV" in event.title %}
+                <div class="col-md-4 mb-4">
+                    <div class="lecture-card shadow-lg h-100">
+                        {% if "Python" in event.title or "python" in event.title %}
+                            <span class="badge bg-warning course-badge">Python</span>
+                            <span class="card-badge featured">Featured</span>
+                            <img src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top course-img" alt="Python Course">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-2">{{ event.title }}</h5>
+                                <div class="lecture-index small">
+                                    <p class="mb-1">Course Contents:</p>
+                                    <ol class="ps-3 mb-0">
+                                        <li>Python Basics & Syntax</li>
+                                        <li>Data Types & Structures</li>
+                                        <li>Control Flow & Functions</li>
+                                        <li>Object-Oriented Programming</li>
+                                        <li>File Handling & Modules</li>
+                                        <li>Error Handling & Debugging</li>
+                                        <li>Libraries & Frameworks</li>
+                                        <li>Advanced Python Concepts</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        {% elif "SQL" in event.title or "sql" in event.title %}
+                            <span class="badge bg-info course-badge">SQL</span>
+                            <span class="card-badge new">New</span>
+                            <img src="https://images.unsplash.com/photo-1544383835-bda2bc66a55d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top course-img" alt="SQL Course">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-2">{{ event.title }}</h5>
+                                <div class="lecture-index small">
+                                    <p class="mb-1">Course Contents:</p>
+                                    <ol class="ps-3 mb-0">
+                                        <li>Introduction to SQL & Databases</li>
+                                        <li>Basic Queries (SELECT, WHERE, ORDER BY)</li>
+                                        <li>Joins & Relationships</li>
+                                        <li>Aggregation & Grouping</li>
+                                        <li>Database Design & Normalization</li>
+                                        <li>Indexing & Performance</li>
+                                        <li>Transactions & ACID Properties</li>
+                                        <li>Advanced SQL Features</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        {% elif "Web Dev" in event.title or "WEB DEV" in event.title %}
+                            <span class="badge bg-success course-badge">Web Dev</span>
+                            <img src="https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top course-img" alt="Web Development Course">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-2">{{ event.title }}</h5>
+                                <div class="lecture-index small">
+                                    <p class="mb-1">Course Contents:</p>
+                                    <ol class="ps-3 mb-0">
+                                        <li>HTML5 Fundamentals</li>
+                                        <li>CSS3 & Modern Styling</li>
+                                        <li>JavaScript Essentials</li>
+                                        <li>Responsive Design</li>
+                                        <li>Front-end Frameworks</li>
+                                        <li>Backend Development</li>
+                                        <li>Database Integration</li>
+                                        <li>Web Security & Best Practices</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body position-relative">
+                            <div class="difficulty-badge 
+                                {% if forloop.counter <= 2 %}beginner
+                                {% elif forloop.counter <= 4 %}intermediate
+                                {% else %}advanced{% endif %}">
+                                {{ forloop.counter|divisibleby:3|yesno:"Advanced,Intermediate,Beginner" }}
+                            </div>
+                            <p class="card-text">{{ event.description|truncatechars:80 }}</p>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class='bx bx-time-five me-2'></i>
+                                <span>{{ event.duration|default:"2-3 weeks" }}</span>
+                            </div>
+
+                            <!-- Course Materials Section -->
+                            <div class="materials-section">
+                                <h6 class="mb-3"><i class='bx bx-download me-2'></i>Course Materials</h6>
+                                {% if "Python" in event.title or "python" in event.title %}
+                                    <div class="material-item">
+                                        <i class='bx bx-file-blank material-icon'></i>
+                                        <div>
+                                            <a href="{% static 'sources/Python_Cheatsheet_Extended.pdf' %}" class="text-decoration-none" download>
+                                                <strong>Python Cheat Sheet</strong>
+                                            </a>
+                                            <small class="d-block text-muted">Quick reference guide</small>
+                                        </div>
+                                    </div>
+                                    <div class="material-item">
+                                        <i class='bx bx-code-block material-icon'></i>
+                                        <div>
+                                            <a href="{% static 'sources/Python_Practice_Questions_Extended.pdf' %}" class="text-decoration-none" download>
+                                                <strong>Practice Exercises</strong>
+                                            </a>
+                                            <small class="d-block text-muted">Hands-on coding practice</small>
+                                        </div>
+                                    </div>
+                                {% elif "SQL" in event.title or "sql" in event.title %}
+                                    <div class="material-item">
+                                        <i class='bx bx-data material-icon'></i>
+                                        <div>
+                                            <a href="{% static 'sources/SQL_Cheatsheet_Extended.pdf' %}" class="text-decoration-none" download>
+                                                <strong>SQL Cheat Sheet</strong>
+                                            </a>
+                                            <small class="d-block text-muted">Complete SQL reference</small>
+                                        </div>
+                                    </div>
+                                    <div class="material-item">
+                                        <i class='bx bx-code-block material-icon'></i>
+                                        <div>
+                                            <a href="{% static 'sources/SQL_Practice_Questions_Extended.pdf' %}" class="text-decoration-none" download>
+                                                <strong>SQL Practice Exercises</strong>
+                                            </a>
+                                            <small class="d-block text-muted">Database practice problems</small>
+                                        </div>
+                                    </div>
+                                {% elif "Web Dev" in event.title or "WEB DEV" in event.title %}
+                                    <div class="material-item">
+                                        <i class='bx bx-world material-icon'></i>
+                                        <div>
+                                            <a href="{% static 'sources/WebDev_Cheatsheet.pdf' %}" class="text-decoration-none" target="_blank">
+                                                <strong>Web Dev Resources</strong>
+                                            </a>
+                                            <small class="d-block text-muted">Tools, frameworks & guides</small>
+                                        </div>
+                                    </div>
+                                    <div class="material-item">
+                                        <i class='bx bx-code-alt material-icon'></i>
+                                        <div>
+                                            <a href="{% static 'sources/WebDev_Practice_Questions.pdf' %}" class="text-decoration-none" target="_blank">
+                                                <strong>Practice Projects</strong>
+                                            </a>
+                                            <small class="d-block text-muted">Real-world project ideas</small>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="lecture-stats">
+                                    <span class="me-3"><i class='bx bx-time-five'></i> {{ event.duration|default:"2-3 weeks" }}</span>
+                                    <span><i class='bx bx-book-open'></i> 8 lessons</span>
+                                </div>
+                                {% if "Python" in event.title or "python" in event.title %}
+                                    <a href="{% url 'python-lecture' %}" class="btn btn-success btn-custom">
+                                        <i class='bx bxl-python me-2'></i>View Python Lectures
+                                    </a>
+                                {% elif "SQL" in event.title or "sql" in event.title %}
+                                    <a href="{% url 'sql-lecture' %}" class="btn btn-info btn-custom text-white">
+                                        <i class='bx bx-data me-2'></i>View SQL Lectures
+                                    </a>
+                                {% elif "Web Dev" in event.title or "WEB DEV" in event.title %}
+                                    <a href="{% url 'web-lecture' %}" class="btn btn-primary btn-custom">
+                                        <i class='bx bx-code-alt me-2'></i>View Web Lectures
+                                    </a>
+                                {% else %}
+                                    <p class="text-muted mb-0">
+                                        <i class='bx bx-info-circle me-2'></i>No specific lectures available
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            
+            <!-- Other Courses Category -->
+            <div class="col-12 mb-4 mt-4">
+                <div class="category-header">
+                    <h3><i class='bx bx-book me-2'></i> Other Courses</h3>
+                    <p>Explore additional educational content</p>
+                </div>
+            </div>
+            
+            {% for event in enrolled_events %}
+                {% if not "Python" in event.title and not "python" in event.title and not "SQL" in event.title and not "sql" in event.title and not "Web Dev" in event.title and not "WEB DEV" in event.title %}
+                <div class="col-md-4 mb-4">
+                    <div class="card lecture-card shadow-lg h-100">
+                        <span class="badge bg-secondary course-badge">Course</span>
+                        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top course-img" alt="Course">
+                        
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">{{ event.title }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">{{ event.description|truncatechars:80 }}</p>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class='bx bx-time-five me-2'></i>
+                                <span>{{ event.duration|default:"1-2 weeks" }}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent text-center">
+                            <p class="text-muted mb-0">
+                                <i class='bx bx-info-circle me-2'></i>Materials coming soon
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="col-md-8 mx-auto text-center">
+                <div class="alert alert-warning shadow-sm rounded-3 p-4">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class='bx bx-error-circle fs-1 me-3'></i>
+                        <div class="text-start">
+                            <h4 class="mb-2">No Enrolled Events</h4>
+                            <p class="mb-3">You need to enroll in events to access course lectures and materials. Visit the events page to browse available courses.</p>
+                            <a href="{% url 'std-event' %}" class="btn btn-primary btn-custom">
+                                <i class='bx bx-calendar-event me-2'></i>Browse Events
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

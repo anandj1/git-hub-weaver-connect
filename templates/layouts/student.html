@@ -1,0 +1,385 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - {{ PROJECT_NAME }}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link href="{% static 'icon/css/boxicons.min.css' %}" rel='stylesheet'>
+    
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --accent-color: #f6c23e;
+            --dark-color: #5a5c69;
+            --light-color: #f8f9fc;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --hover-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        body {
+            background-color: var(--light-color);
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            transition: all 0.3s ease;
+            padding-top: 60px;
+        }
+        
+        /* Enhanced Navbar Styling */
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), #3a57c9);
+            min-height: 60px;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            color: white !important;
+            padding: 0.3rem 0.5rem;
+        }
+        
+        .navbar-brand i {
+            margin-right: 8px;
+            font-size: 1.8rem;
+        }
+        
+        .navbar-dark .navbar-nav {
+            align-items: center;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            transition: all 0.3s ease;
+            padding: 0.4rem 0.6rem;
+            position: relative;
+            border-radius: 4px;
+            margin: 0 1px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .navbar-dark .navbar-nav .nav-link.active {
+            color: #ffffff !important;
+            font-weight: 600;
+            background-color: var(--hover-color);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-dark .navbar-nav .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background-color: var(--warning-color);
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link i {
+            margin-right: 4px;
+            transition: transform 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover i {
+            transform: scale(1.2);
+        }
+
+        .nav-link.logout-link {
+            color: var(--danger-color) !important;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0.4rem 1rem !important;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link.logout-link:hover {
+            background-color: var(--danger-color) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Fix for navbar overflow */
+        @media (max-width: 1199px) {
+            .navbar-collapse {
+                max-height: 80vh;
+                overflow-y: auto;
+                padding-bottom: 1rem;
+            }
+            
+            .navbar-nav {
+                padding: 0.5rem 0;
+            }
+            
+            .navbar-dark .navbar-nav .nav-link {
+                padding: 0.5rem 1rem;
+                margin: 2px 0;
+            }
+            
+            .dropdown-menu {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+        }
+        
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            animation: dropdownFade 0.3s ease;
+            background: linear-gradient(135deg, var(--primary-color), #3a57c9);
+            margin-top: 0;
+            padding: 0.5rem;
+        }
+        
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dropdown-item {
+            padding: 0.7rem 1.2rem;
+            transition: all 0.2s ease;
+            color: white !important;
+            border-radius: 4px;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--hover-color);
+            transform: translateX(5px);
+        }
+        
+        .dropdown-item.active {
+            background-color: var(--hover-color);
+        }
+        
+        /* Enhanced Footer Styling */
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), #3a57c9);
+            padding: 2rem 0;
+            margin-top: 3rem;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        footer h5 {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        footer .social-icons {
+            margin-top: 1rem;
+        }
+
+        footer .social-icons i {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        footer .social-icons i:hover {
+            transform: translateY(-3px);
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class='bx bx-book-reader text-warning'></i> 
+                {{ PROJECT_NAME_SHORT }}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-index' %}active{% endif %}" 
+                           href="{% url 'std-index' %}">
+                           <i class='bx bxs-home'></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-quiz' %}active{% endif %}" 
+                           href="{% url 'std-quiz' %}">
+                           <i class='bx bxs-brain'></i> Quiz
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'discussion' in request.resolver_match.url_name %}active{% endif %}" 
+                           href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                           <i class='bx bxs-chat'></i> Discuss
+                        </a>
+                        <ul class="dropdown-menu animate slideIn" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item {% if request.resolver_match.url_name == 'std-classroom-discussion' %}active{% endif %}" 
+                                   href="{% url 'std-classroom-discussion' %}">
+                                   <i class='bx bx-bot'></i> Ask AI
+                                </a>
+                            </li>
+                            <li>
+                                {% if enrolled_events %}
+                                    <a class="dropdown-item {% if request.resolver_match.url_name == 'std-flipped-classroom-discussion' %}active{% endif %}" 
+                                       href="{% url 'std-flipped-classroom-discussion' enrolled_events.0.id %}">
+                                       <i class='bx bx-chalkboard'></i> Flipped Class
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{% url 'std-event' %}">
+                                       <i class='bx bx-info-circle'></i> Flipped Class (Enroll)
+                                    </a>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-attendance' %}active{% endif %}" 
+                           href="{% url 'std-attendance' %}">
+                           <i class='bx bx-calendar-check'></i> Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-games-index' %}active{% endif %}" 
+                           href="{% url 'std-games-index' %}">
+                           <i class='bx bx-game'></i> Games
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-extra-cirricular' %}active{% endif %}" 
+                           href="{% url 'std-extra-cirricular' %}">
+                           <i class='bx bx-trophy'></i> Extra
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-event' %}active{% endif %}" 
+                           href="{% url 'std-event' %}">
+                           <i class='bx bx-calendar-event'></i> Event
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-lecture' %}active{% endif %}" 
+                           href="{% url 'std-lecture' %}">
+                           <i class='bx bx-video'></i> Lectures
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'std-feedback' %}active{% endif %}" 
+                           href="{% url 'std-feedback' %}">
+                           <i class='bx bx-message-detail'></i> Feedback
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" href="{% url 'account-logout' %}">
+                           <i class='bx bx-log-out'></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                {% include 'include/msg.html' %}
+            </div>
+        </div>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <h5>{{ PROJECT_NAME }}</h5>
+                    <p>Transforming education through gamification</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p>&copy; {% now "Y" %} {{ PROJECT_NAME }}</p>
+                    <div class="social-icons">
+                        <i class='bx bxl-facebook-circle me-2 fs-4'></i>
+                        <i class='bx bxl-twitter me-2 fs-4'></i>
+                        <i class='bx bxl-instagram me-2 fs-4'></i>
+                        <i class='bx bxl-github fs-4'></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+            
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const value = bar.getAttribute('aria-valuenow');
+                bar.style.width = value + '%';
+            });
+            
+            if (document.querySelector('.lecture-link')) {
+                window.addEventListener('scroll', function() {
+                    const sections = document.querySelectorAll('[id^="lecture"]');
+                    let current = '';
+                    
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop - 200;
+                        if (window.pageYOffset >= sectionTop) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+                    
+                    document.querySelectorAll('.lecture-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${current}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

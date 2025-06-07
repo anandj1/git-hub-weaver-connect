@@ -1,0 +1,414 @@
+
+{% extends 'layouts/student.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .attendance-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    
+    .attendance-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+    }
+    
+    .table th {
+        background-color: #4e73df;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .attendance-stats {
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress {
+        height: 10px;
+        border-radius: 5px;
+    }
+    
+    .status-present {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-left: 4px solid #28a745;
+    }
+    
+    .status-absent {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-left: 4px solid #dc3545;
+    }
+    
+    .status-leave {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+    }
+    
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .badge-present {
+        background-color: #28a745;
+    }
+    
+    .badge-absent {
+        background-color: #dc3545;
+    }
+    
+    .badge-leave {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .badge-extra {
+        background-color: #17a2b8;
+    }
+
+    .calendar-view {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin-top: 20px;
+    }
+    
+    .calendar-day {
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: 500;
+    }
+    
+    .calendar-header {
+        font-weight: bold;
+        background-color: #4e73df;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    
+    .tab-content {
+        padding: 20px;
+        background-color: white;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-tabs .nav-link {
+        border-radius: 10px 10px 0 0;
+        font-weight: 600;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background-color: white;
+        border-bottom-color: white;
+    }
+</style>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="text-primary mb-4">{{ title }}</h2>
+            
+            <!-- Attendance Overview -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card attendance-stats h-100 border-left-primary">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Attendance Rate</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {% with present_count=data|dictsort:"status"|length %}
+                                        {% with total_count=data|length %}
+                                        {% if total_count > 0 %}
+                                            {{ present_count|floatformat:0 }}%
+                                            <div class="progress mt-2">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: {{ present_count }}%" 
+                                                    aria-valuenow="{{ present_count }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bx bx-calendar-check fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card attendance-stats h-100 border-left-success">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Total Attendance Days</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ data|length }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bx bx-calendar fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card attendance-stats h-100 border-left-info">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Total Coins Earned</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {% with total_coins=0 %}
+                                        {% for x in data %}
+                                            {% with total_coins=total_coins|add:x.coin %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                        {{ total_coins }}
+                                        {% endwith %}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="bx bx-coin fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Attendance Views (Tabs) -->
+            <div class="card attendance-card mb-4">
+                <div class="card-header p-0">
+                    <ul class="nav nav-tabs" id="attendanceTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="table-tab" data-bs-toggle="tab" href="#table-view" role="tab" aria-controls="table-view" aria-selected="true">
+                                <i class='bx bx-table me-2'></i>Table View
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="calendar-tab" data-bs-toggle="tab" href="#calendar-view" role="tab" aria-controls="calendar-view" aria-selected="false">
+                                <i class='bx bx-calendar me-2'></i>Calendar View
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="stats-tab" data-bs-toggle="tab" href="#stats-view" role="tab" aria-controls="stats-view" aria-selected="false">
+                                <i class='bx bx-bar-chart-alt-2 me-2'></i>Statistics
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="tab-content" id="attendanceTabContent">
+                    <!-- Table View Tab -->
+                    <div class="tab-pane fade show active" id="table-view" role="tabpanel" aria-labelledby="table-tab">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Day</th>
+                                        <th>Staff</th>
+                                        <th>Status</th>
+                                        <th>Extra Credit</th>
+                                        <th>Coins</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for x in data %}
+                                    <tr class="{% if x.status == 'Present' %}status-present{% elif x.status == 'Absent' %}status-absent{% elif x.status == 'Leave' %}status-leave{% endif %}">
+                                        <td>{{ x.attendance.date }}</td>
+                                        <td>{{ x.attendance.day }}</td>
+                                        <td>{{ x.staff_profile.name }}</td>
+                                        <td>
+                                            {% if x.status == 'Present' %}
+                                                <span class="badge badge-present">Present</span>
+                                            {% elif x.status == 'Absent' %}
+                                                <span class="badge badge-absent">Absent</span>
+                                            {% elif x.status == 'Leave' %}
+                                                <span class="badge badge-leave">Leave</span>
+                                            {% else %}
+                                                {{ x.status }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if x.is_extra %}
+                                                <span class="badge badge-extra">Extra</span>
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold">{{ x.coin }}</span>
+                                            <i class='bx bx-coin text-warning'></i>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar View Tab -->
+                    <div class="tab-pane fade" id="calendar-view" role="tabpanel" aria-labelledby="calendar-tab">
+                        <div class="calendar-view mb-3">
+                            <div class="calendar-header">Sun</div>
+                            <div class="calendar-header">Mon</div>
+                            <div class="calendar-header">Tue</div>
+                            <div class="calendar-header">Wed</div>
+                            <div class="calendar-header">Thu</div>
+                            <div class="calendar-header">Fri</div>
+                            <div class="calendar-header">Sat</div>
+                            
+                            <!-- Generate calendar days dynamically -->
+                            <!-- This would be populated with actual attendance data in a real implementation -->
+                            {% for i in "12345" %}
+                                {% for j in "1234567" %}
+                                    <div class="calendar-day 
+                                        {% if forloop.counter == 1 or forloop.counter == 7 %}bg-light text-muted{% endif %}
+                                        {% if forloop.parentloop.counter == 1 and forloop.counter < 3 %}bg-light text-muted{% endif %}
+                                        {% if forloop.parentloop.counter == 5 and forloop.counter > 4 %}bg-light text-muted{% endif %}
+                                        {% if forloop.parentloop.counter == 3 and forloop.counter == 4 %}status-present{% endif %}
+                                        {% if forloop.parentloop.counter == 2 and forloop.counter == 3 %}status-absent{% endif %}
+                                        {% if forloop.parentloop.counter == 4 and forloop.counter == 2 %}status-leave{% endif %}
+                                    ">
+                                        <!-- Calculate day number -->
+                                        {% with day_offset=forloop.counter|add:"-1" %}
+                                        {% with row_offset=forloop.parentloop.counter|add:"-1" %}
+                                        {% with day_num=row_offset|add:"0"|add:"0"|add:"0"|add:"0"|add:"0"|add:"0"|add:day_offset %}
+                                            {% if day_num > 0 and day_num < 30 %}
+                                                {{ day_num }}
+                                                {% if forloop.parentloop.counter == 3 and forloop.counter == 4 %}
+                                                    <br><span class="badge badge-present">P</span>
+                                                {% endif %}
+                                                {% if forloop.parentloop.counter == 2 and forloop.counter == 3 %}
+                                                    <br><span class="badge badge-absent">A</span>
+                                                {% endif %}
+                                                {% if forloop.parentloop.counter == 4 and forloop.counter == 2 %}
+                                                    <br><span class="badge badge-leave">L</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <div class="alert alert-info">
+                            <i class='bx bx-info-circle me-2'></i>
+                            Calendar view shows current month's attendance at a glance.
+                        </div>
+                    </div>
+                    
+                    <!-- Statistics View Tab -->
+                    <div class="tab-pane fade" id="stats-view" role="tabpanel" aria-labelledby="stats-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0">Attendance Distribution</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Attendance Distribution Chart (Placeholder) -->
+                                        <div class="attendance-chart-placeholder" style="height: 200px; background-color: #f8f9fc; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
+                                            <p class="mb-0 text-muted">Attendance distribution chart would display here</p>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-4 text-center">
+                                                <div class="badge badge-present p-2 mb-2 d-block">Present</div>
+                                                <h5>70%</h5>
+                                            </div>
+                                            <div class="col-4 text-center">
+                                                <div class="badge badge-absent p-2 mb-2 d-block">Absent</div>
+                                                <h5>20%</h5>
+                                            </div>
+                                            <div class="col-4 text-center">
+                                                <div class="badge badge-leave p-2 mb-2 d-block">Leave</div>
+                                                <h5>10%</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header bg-success text-white">
+                                        <h5 class="mb-0">Performance Metrics</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Attendance Score</label>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">85/100 - Excellent</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Punctuality Rating</label>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">75/100 - Good</small>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Participation Score</label>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">90/100 - Outstanding</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">Attendance Recommendations</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-success">
+                                    <i class='bx bx-check-circle me-2'></i>
+                                    <strong>Great job!</strong> Your attendance record is strong. Keep it up!
+                                </div>
+                                <div class="alert alert-warning">
+                                    <i class='bx bx-bulb me-2'></i>
+                                    <strong>Tip:</strong> Complete the extra credit assignments to earn more coins.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Bootstrap tabs
+        var triggerTabList = [].slice.call(document.querySelectorAll('#attendanceTabs a'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+    });
+</script>
+{% endblock %}

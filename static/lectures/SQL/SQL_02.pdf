@@ -1,0 +1,242 @@
+-- SQL Practice Exercises
+-- Complete these exercises to reinforce your learning
+
+-- ================================
+-- SETUP - Create sample tables
+-- ================================
+
+-- Create database (uncomment if needed)
+-- CREATE DATABASE practice_db;
+-- USE practice_db;
+
+-- Create tables
+CREATE TABLE students (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    age INT,
+    major VARCHAR(50),
+    gpa DECIMAL(3,2),
+    enrollment_date DATE
+);
+
+CREATE TABLE courses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100) NOT NULL,
+    credits INT,
+    instructor VARCHAR(100),
+    department VARCHAR(50)
+);
+
+CREATE TABLE enrollments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    student_id INT,
+    course_id INT,
+    grade CHAR(2),
+    semester VARCHAR(20),
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (course_id) REFERENCES courses(id)
+);
+
+-- Insert sample data
+INSERT INTO students (name, email, age, major, gpa, enrollment_date) VALUES
+('Alice Johnson', 'alice@email.com', 20, 'Computer Science', 3.8, '2022-09-01'),
+('Bob Smith', 'bob@email.com', 22, 'Mathematics', 3.5, '2021-09-01'),
+('Carol Davis', 'carol@email.com', 19, 'Computer Science', 3.9, '2023-09-01'),
+('David Wilson', 'david@email.com', 21, 'Physics', 3.2, '2022-01-15'),
+('Eva Brown', 'eva@email.com', 20, 'Mathematics', 3.7, '2022-09-01');
+
+INSERT INTO courses (course_name, credits, instructor, department) VALUES
+('Introduction to Programming', 3, 'Dr. Smith', 'Computer Science'),
+('Calculus I', 4, 'Prof. Johnson', 'Mathematics'),
+('Physics I', 4, 'Dr. Wilson', 'Physics'),
+('Data Structures', 3, 'Dr. Davis', 'Computer Science'),
+('Linear Algebra', 3, 'Prof. Brown', 'Mathematics');
+
+INSERT INTO enrollments (student_id, course_id, grade, semester) VALUES
+(1, 1, 'A', 'Fall 2022'),
+(1, 2, 'B+', 'Fall 2022'),
+(2, 2, 'A-', 'Fall 2021'),
+(2, 5, 'B', 'Spring 2022'),
+(3, 1, 'A', 'Fall 2023'),
+(3, 4, 'A-', 'Spring 2024'),
+(4, 3, 'B', 'Spring 2022'),
+(5, 2, 'A', 'Fall 2022'),
+(5, 5, 'A-', 'Fall 2022');
+
+-- ================================
+-- EXERCISES
+-- ================================
+
+-- Exercise 1: Basic SELECT
+-- Write a query to select all students
+
+-- Your answer:
+
+
+-- Exercise 2: Filtering
+-- Find all students majoring in Computer Science
+
+-- Your answer:
+
+
+-- Exercise 3: Sorting
+-- List all students ordered by GPA (highest first)
+
+-- Your answer:
+
+
+-- Exercise 4: Aggregate Functions
+-- Find the average GPA of all students
+
+-- Your answer:
+
+
+-- Exercise 5: GROUP BY
+-- Count how many students are in each major
+
+-- Your answer:
+
+
+-- Exercise 6: HAVING clause
+-- Find majors that have more than 1 student
+
+-- Your answer:
+
+
+-- Exercise 7: INNER JOIN
+-- List all enrollments with student names and course names
+
+-- Your answer:
+
+
+-- Exercise 8: LEFT JOIN
+-- List all students and their enrollments (include students with no enrollments)
+
+-- Your answer:
+
+
+-- Exercise 9: Subquery
+-- Find students with GPA higher than the average GPA
+
+-- Your answer:
+
+
+-- Exercise 10: Complex Query
+-- Find the top 3 students by GPA in Computer Science major
+
+-- Your answer:
+
+
+-- Exercise 11: UPDATE
+-- Update Bob Smith's GPA to 3.6
+
+-- Your answer:
+
+
+-- Exercise 12: INSERT
+-- Add a new student: 'Frank Miller', 'frank@email.com', 23, 'Physics', 3.4, '2023-01-15'
+
+-- Your answer:
+
+
+-- Exercise 13: DELETE
+-- Remove all enrollments with grade 'F' (if any exist)
+
+-- Your answer:
+
+
+-- Exercise 14: Window Functions
+-- Rank students by GPA within their major
+
+-- Your answer:
+
+
+-- Exercise 15: CASE statement
+-- Create a query that shows student names and their GPA category:
+-- 'Excellent' for GPA >= 3.7
+-- 'Good' for GPA >= 3.0
+-- 'Needs Improvement' for GPA < 3.0
+
+-- Your answer:
+
+
+-- ================================
+-- ADVANCED EXERCISES
+-- ================================
+
+-- Exercise 16: Find students who are enrolled in more than 2 courses
+
+-- Your answer:
+
+
+-- Exercise 17: Calculate the average grade for each course (convert letter grades to numbers)
+-- A = 4.0, A- = 3.7, B+ = 3.3, B = 3.0, B- = 2.7, etc.
+
+-- Your answer:
+
+
+-- Exercise 18: Find pairs of students who are enrolled in the same course
+
+-- Your answer:
+
+
+-- Exercise 19: Create a view that shows student performance summary
+-- Include: student name, major, number of courses taken, average grade
+
+-- Your answer:
+
+
+-- Exercise 20: Find the most popular course (most enrollments)
+
+-- Your answer:
+
+
+-- ================================
+-- SOLUTIONS (Don't peek until you try!)
+-- ================================
+
+/*
+-- Exercise 1 Solution:
+SELECT * FROM students;
+
+-- Exercise 2 Solution:
+SELECT * FROM students WHERE major = 'Computer Science';
+
+-- Exercise 3 Solution:
+SELECT * FROM students ORDER BY gpa DESC;
+
+-- Exercise 4 Solution:
+SELECT AVG(gpa) as average_gpa FROM students;
+
+-- Exercise 5 Solution:
+SELECT major, COUNT(*) as student_count FROM students GROUP BY major;
+
+-- Exercise 6 Solution:
+SELECT major, COUNT(*) as student_count 
+FROM students 
+GROUP BY major 
+HAVING COUNT(*) > 1;
+
+-- Exercise 7 Solution:
+SELECT s.name, c.course_name, e.grade, e.semester
+FROM enrollments e
+INNER JOIN students s ON e.student_id = s.id
+INNER JOIN courses c ON e.course_id = c.id;
+
+-- Exercise 8 Solution:
+SELECT s.name, c.course_name, e.grade, e.semester
+FROM students s
+LEFT JOIN enrollments e ON s.id = e.student_id
+LEFT JOIN courses c ON e.course_id = c.id;
+
+-- Exercise 9 Solution:
+SELECT * FROM students 
+WHERE gpa > (SELECT AVG(gpa) FROM students);
+
+-- Exercise 10 Solution:
+SELECT * FROM students 
+WHERE major = 'Computer Science' 
+ORDER BY gpa DESC 
+LIMIT 3;
+*/

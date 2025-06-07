@@ -1,0 +1,316 @@
+-- SQL Cheat Sheet
+
+-- ================================
+-- BASIC QUERIES
+-- ================================
+
+-- Select all columns
+SELECT * FROM users;
+
+-- Select specific columns
+SELECT name, email FROM users;
+
+-- Select with condition
+SELECT * FROM users WHERE age > 18;
+
+-- Select with multiple conditions
+SELECT * FROM users WHERE age > 18 AND city = 'New York';
+
+-- Select with OR condition
+SELECT * FROM users WHERE city = 'New York' OR city = 'Los Angeles';
+
+-- Select with LIKE (pattern matching)
+SELECT * FROM users WHERE name LIKE 'John%';  -- Names starting with 'John'
+SELECT * FROM users WHERE email LIKE '%@gmail.com';  -- Gmail addresses
+
+-- Select with IN
+SELECT * FROM users WHERE city IN ('New York', 'Los Angeles', 'Chicago');
+
+-- Select with BETWEEN
+SELECT * FROM users WHERE age BETWEEN 18 AND 65;
+
+-- ================================
+-- SORTING AND LIMITING
+-- ================================
+
+-- Order by (ascending)
+SELECT * FROM users ORDER BY name;
+
+-- Order by (descending)
+SELECT * FROM users ORDER BY age DESC;
+
+-- Order by multiple columns
+SELECT * FROM users ORDER BY city, age DESC;
+
+-- Limit results
+SELECT * FROM users LIMIT 10;
+
+-- Limit with offset
+SELECT * FROM users LIMIT 10 OFFSET 20;
+
+-- ================================
+-- AGGREGATE FUNCTIONS
+-- ================================
+
+-- Count rows
+SELECT COUNT(*) FROM users;
+
+-- Count non-null values
+SELECT COUNT(email) FROM users;
+
+-- Sum
+SELECT SUM(salary) FROM employees;
+
+-- Average
+SELECT AVG(age) FROM users;
+
+-- Min and Max
+SELECT MIN(age), MAX(age) FROM users;
+
+-- Group by
+SELECT city, COUNT(*) FROM users GROUP BY city;
+
+-- Group by with having
+SELECT city, COUNT(*) FROM users GROUP BY city HAVING COUNT(*) > 5;
+
+-- ================================
+-- JOINS
+-- ================================
+
+-- Inner Join
+SELECT u.name, o.order_date
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id;
+
+-- Left Join
+SELECT u.name, o.order_date
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;
+
+-- Right Join
+SELECT u.name, o.order_date
+FROM users u
+RIGHT JOIN orders o ON u.id = o.user_id;
+
+-- Full Outer Join
+SELECT u.name, o.order_date
+FROM users u
+FULL OUTER JOIN orders o ON u.id = o.user_id;
+
+-- ================================
+-- SUBQUERIES
+-- ================================
+
+-- Subquery in WHERE
+SELECT * FROM users 
+WHERE id IN (SELECT user_id FROM orders WHERE total > 100);
+
+-- Subquery in SELECT
+SELECT name, 
+       (SELECT COUNT(*) FROM orders WHERE user_id = users.id) as order_count
+FROM users;
+
+-- Correlated subquery
+SELECT * FROM users u1
+WHERE age > (SELECT AVG(age) FROM users u2 WHERE u2.city = u1.city);
+
+-- ================================
+-- DATA MODIFICATION
+-- ================================
+
+-- Insert single row
+INSERT INTO users (name, email, age) VALUES ('John Doe', 'john@email.com', 25);
+
+-- Insert multiple rows
+INSERT INTO users (name, email, age) VALUES 
+    ('Jane Smith', 'jane@email.com', 30),
+    ('Bob Johnson', 'bob@email.com', 35);
+
+-- Update records
+UPDATE users SET age = 26 WHERE name = 'John Doe';
+
+-- Update multiple columns
+UPDATE users SET age = 26, city = 'Boston' WHERE id = 1;
+
+-- Delete records
+DELETE FROM users WHERE age < 18;
+
+-- Delete all records (be careful!)
+DELETE FROM users;
+
+-- ================================
+-- TABLE OPERATIONS
+-- ================================
+
+-- Create table
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    age INT,
+    city VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add column
+ALTER TABLE users ADD COLUMN phone VARCHAR(20);
+
+-- Modify column
+ALTER TABLE users MODIFY COLUMN phone VARCHAR(25);
+
+-- Drop column
+ALTER TABLE users DROP COLUMN phone;
+
+-- Drop table
+DROP TABLE users;
+
+-- ================================
+-- CONSTRAINTS
+-- ================================
+
+-- Primary Key
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+-- Foreign Key
+CREATE TABLE orders (
+    id INT PRIMARY KEY,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Unique constraint
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    email VARCHAR(100) UNIQUE
+);
+
+-- Check constraint
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    age INT CHECK (age >= 0)
+);
+
+-- Not null
+CREATE TABLE users (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+-- ================================
+-- INDEXES
+-- ================================
+
+-- Create index
+CREATE INDEX idx_user_email ON users(email);
+
+-- Create composite index
+CREATE INDEX idx_user_city_age ON users(city, age);
+
+-- Drop index
+DROP INDEX idx_user_email;
+
+-- ================================
+-- VIEWS
+-- ================================
+
+-- Create view
+CREATE VIEW active_users AS
+SELECT * FROM users WHERE status = 'active';
+
+-- Use view
+SELECT * FROM active_users;
+
+-- Drop view
+DROP VIEW active_users;
+
+-- ================================
+-- COMMON FUNCTIONS
+-- ================================
+
+-- String functions
+SELECT UPPER(name) FROM users;
+SELECT LOWER(email) FROM users;
+SELECT LENGTH(name) FROM users;
+SELECT SUBSTRING(name, 1, 3) FROM users;
+SELECT CONCAT(first_name, ' ', last_name) as full_name FROM users;
+
+-- Date functions
+SELECT NOW();
+SELECT CURDATE();
+SELECT YEAR(created_at) FROM users;
+SELECT MONTH(created_at) FROM users;
+SELECT DATEDIFF(NOW(), created_at) as days_since_created FROM users;
+
+-- Math functions
+SELECT ROUND(price, 2) FROM products;
+SELECT CEIL(price) FROM products;
+SELECT FLOOR(price) FROM products;
+SELECT ABS(balance) FROM accounts;
+
+-- ================================
+-- WINDOW FUNCTIONS
+-- ================================
+
+-- Row number
+SELECT name, age, ROW_NUMBER() OVER (ORDER BY age) as row_num FROM users;
+
+-- Rank
+SELECT name, salary, RANK() OVER (ORDER BY salary DESC) as rank FROM employees;
+
+-- Running total
+SELECT name, salary, SUM(salary) OVER (ORDER BY id) as running_total FROM employees;
+
+-- Partition by
+SELECT name, department, salary,
+       AVG(salary) OVER (PARTITION BY department) as dept_avg
+FROM employees;
+
+-- ================================
+-- TRANSACTIONS
+-- ================================
+
+-- Start transaction
+BEGIN;
+
+-- Your SQL statements here
+UPDATE accounts SET balance = balance - 100 WHERE id = 1;
+UPDATE accounts SET balance = balance + 100 WHERE id = 2;
+
+-- Commit changes
+COMMIT;
+
+-- Or rollback if something went wrong
+-- ROLLBACK;
+
+-- ================================
+-- COMMON PATTERNS
+-- ================================
+
+-- Find duplicates
+SELECT email, COUNT(*) 
+FROM users 
+GROUP BY email 
+HAVING COUNT(*) > 1;
+
+-- Delete duplicates (keep one)
+DELETE u1 FROM users u1
+INNER JOIN users u2 
+WHERE u1.id > u2.id AND u1.email = u2.email;
+
+-- Top N per group
+SELECT * FROM (
+    SELECT name, department, salary,
+           ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) as rn
+    FROM employees
+) ranked
+WHERE rn <= 3;
+
+-- Pivot table simulation
+SELECT 
+    SUM(CASE WHEN department = 'Sales' THEN salary END) as Sales,
+    SUM(CASE WHEN department = 'IT' THEN salary END) as IT,
+    SUM(CASE WHEN department = 'HR' THEN salary END) as HR
+FROM employees;

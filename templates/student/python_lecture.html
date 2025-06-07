@@ -1,0 +1,492 @@
+
+{% extends 'layouts/student.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .video-container {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    
+    .video-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+    }
+    
+    .lecture-nav {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        position: sticky;
+        top: 100px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .lecture-link {
+        display: block;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        transition: all 0.2s ease;
+    }
+    
+    .lecture-link:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .lecture-link.active {
+        background: #4e73df;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .lecture-title {
+        background: linear-gradient(90deg, #4e73df, #475bc4);
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .download-btn {
+        transition: all 0.3s ease;
+    }
+    
+    .download-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .topic-index {
+        margin-bottom: 20px;
+    }
+    
+    .topic-index-item {
+        background: rgba(78, 115, 223, 0.1);
+        padding: 10px;
+        margin-bottom: 5px;
+        border-radius: 5px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .topic-index-item:hover {
+        background: rgba(78, 115, 223, 0.2);
+        transform: translateX(5px);
+    }
+    
+    .code-snippet {
+        background: #f8f9fa;
+        border-left: 4px solid #4e73df;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 5px;
+        font-family: monospace;
+        overflow-x: auto;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="lecture-title">
+                <h2 class="mb-0">Python Lectures</h2>
+                <p class="lead mb-0">Master Python programming from basics to advanced techniques</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Lecture Navigation Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="lecture-nav">
+                <h5 class="mb-3 text-primary">
+                    <i class='bx bx-list-ul me-2'></i> Lecture Index
+                </h5>
+                <hr>
+                <a href="#lecture0" class="lecture-link active" data-bs-toggle="tooltip" title="Introduction to Python">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 0: Introduction
+                </a>
+                <a href="#lecture1" class="lecture-link" data-bs-toggle="tooltip" title="Python Basics">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 1: Basics
+                </a>
+                <a href="#lecture2" class="lecture-link" data-bs-toggle="tooltip" title="Data Structures">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 2: Data Structures
+                </a>
+                <a href="#lecture3" class="lecture-link" data-bs-toggle="tooltip" title="Functions and Modules">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 3: Functions & Modules
+                </a>
+                <a href="#lecture4" class="lecture-link" data-bs-toggle="tooltip" title="Object-Oriented Programming">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 4: OOP
+                </a>
+                <a href="#lecture5" class="lecture-link" data-bs-toggle="tooltip" title="File Handling and Exceptions">
+                    <i class='bx bx-play-circle me-2'></i> Lecture 5: File I/O
+                </a>
+                
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">Course Materials</h6>
+                    <a href="#" class="btn btn-sm btn-outline-primary w-100 mb-2">
+                        <i class='bx bx-download me-2'></i> Python Cheat Sheet
+                    </a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary w-100">
+                        <i class='bx bx-file me-2'></i> Practice Exercises
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lecture Content -->
+        <div class="col-lg-9">
+            <!-- Lecture 0 -->
+            <div id="lecture0" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lecture 0: Introduction to Python</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="topic-index">
+                            <h5 class="mb-3">Topics Covered:</h5>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> What is Python?</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> History and Philosophy</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Installing Python</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Your First Python Program</div>
+                        </div>
+                        
+                        <p class="mb-3">Welcome to Python programming! This lecture introduces Python, its philosophy, and gets you started with your first program. Python is a high-level, interpreted programming language known for its readability and versatility.</p>
+                        
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/Python/python_lecture_0.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        
+                        <h5 class="mt-4">First Python Program</h5>
+                        <div class="code-snippet">
+                            <pre>print("Hello, World!")</pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-primary mb-2">Beginner</span>
+                                <span class="badge bg-secondary mb-2">45 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/Python/python_lecture_0.mp4' %}" class="btn btn-primary download-btn" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 1 -->
+            <div id="lecture1" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lecture 1: Python Basics</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="topic-index">
+                            <h5 class="mb-3">Topics Covered:</h5>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Variables and Data Types</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Basic Operators</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Control Flow (if/else)</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Loops (for/while)</div>
+                        </div>
+                        
+                        <p class="mb-3">Learn the fundamental building blocks of Python programming including variables, data types, operators, and control structures. These concepts form the foundation of any Python program.</p>
+                        
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/Python/python_lecture_1.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        
+                        <h5 class="mt-4">Basic Control Flow Example</h5>
+                        <div class="code-snippet">
+                            <pre>
+# Example of if/else and loops
+age = 20
+
+if age >= 18:
+    print("You are an adult")
+else:
+    print("You are a minor")
+
+# For loop
+for i in range(5):
+    print(f"Count: {i}")
+</pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-primary mb-2">Beginner</span>
+                                <span class="badge bg-secondary mb-2">50 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/Python/python_lecture_1.mp4' %}" class="btn btn-primary download-btn" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 2 -->
+            <div id="lecture2" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lecture 2: Python Data Structures</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="topic-index">
+                            <h5 class="mb-3">Topics Covered:</h5>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Lists and List Comprehensions</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Dictionaries and Sets</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Tuples and Named Tuples</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Working with Collections</div>
+                        </div>
+                        
+                        <p class="mb-3">Master Python's built-in data structures that help organize and manage data efficiently. Learn how to create, manipulate, and extract information from these powerful collections.</p>
+                        
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/Python/python_lecture_2.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        
+                        <h5 class="mt-4">Data Structure Examples</h5>
+                        <div class="code-snippet">
+                            <pre>
+# List and list comprehension
+numbers = [1, 2, 3, 4, 5]
+squares = [x**2 for x in numbers]
+print(squares)  # [1, 4, 9, 16, 25]
+
+# Dictionary
+student = {
+    "name": "John",
+    "age": 20,
+    "courses": ["Math", "CS", "Physics"]
+}
+print(student["name"])  # John
+</pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-warning mb-2">Intermediate</span>
+                                <span class="badge bg-secondary mb-2">55 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/Python/python_lecture_2.mp4' %}" class="btn btn-primary download-btn" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 3 -->
+            <div id="lecture3" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lecture 3: Functions and Modules</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="topic-index">
+                            <h5 class="mb-3">Topics Covered:</h5>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Defining and Using Functions</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Parameters and Return Values</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Lambda Functions</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Importing and Creating Modules</div>
+                        </div>
+                        
+                        <p class="mb-3">Learn how to create reusable code with functions and organize your code into modules. This lecture covers function definitions, parameters, lambda expressions, and module creation.</p>
+                        
+                        <div class="video-container mb-3">
+                            <video width="100%" height="400px" controls>
+                                <source src="{% static 'lectures/Python/python_lecture_3.mp4' %}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        
+                        <h5 class="mt-4">Function Examples</h5>
+                        <div class="code-snippet">
+                            <pre>
+# Function definition
+def greet(name, greeting="Hello"):
+    """Return a greeting message."""
+    return f"{greeting}, {name}!"
+
+# Function call
+message = greet("Alice")
+print(message)  # Hello, Alice!
+
+# Lambda function
+double = lambda x: x * 2
+print(double(5))  # 10
+</pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-warning mb-2">Intermediate</span>
+                                <span class="badge bg-secondary mb-2">60 minutes</span>
+                            </div>
+                            <a href="{% static 'lectures/Python/python_lecture_3.mp4' %}" class="btn btn-primary download-btn" download>
+                                <i class='bx bx-download me-2'></i> Download Lecture
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 4 -->
+            <div id="lecture4" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lecture 4: Object-Oriented Programming</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="topic-index">
+                            <h5 class="mb-3">Topics Covered:</h5>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Classes and Objects</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Inheritance and Polymorphism</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Encapsulation and Abstraction</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Magic Methods</div>
+                        </div>
+                        
+                        <p class="mb-3">Explore object-oriented programming concepts in Python. Learn how to create classes, instantiate objects, implement inheritance, and use special methods to customize behavior.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class='bx bx-info-circle me-2'></i>
+                            This lecture will be available soon. Check back for updates!
+                        </div>
+                        
+                        <h5 class="mt-4">OOP Example</h5>
+                        <div class="code-snippet">
+                            <pre>
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+    
+    def greet(self):
+        return f"Hello, my name is {self.name}!"
+        
+# Creating an object
+john = Person("John", 30)
+print(john.greet())  # Hello, my name is John!
+</pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-danger mb-2">Advanced</span>
+                                <span class="badge bg-secondary mb-2">65 minutes</span>
+                            </div>
+                            <button class="btn btn-secondary download-btn" disabled>
+                                <i class='bx bx-time me-2'></i> Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lecture 5 -->
+            <div id="lecture5" class="mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Lecture 5: File Handling and Exceptions</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="topic-index">
+                            <h5 class="mb-3">Topics Covered:</h5>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Reading and Writing Files</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Working with CSV and JSON</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Exception Handling</div>
+                            <div class="topic-index-item"><i class='bx bx-check-circle me-2'></i> Creating Custom Exceptions</div>
+                        </div>
+                        
+                        <p class="mb-3">Learn how to work with files, handle errors gracefully with try-except blocks, and deal with common data formats like CSV and JSON.</p>
+                        
+                        <div class="alert alert-info">
+                            <i class='bx bx-info-circle me-2'></i>
+                            This lecture will be available soon. Check back for updates!
+                        </div>
+                        
+                        <h5 class="mt-4">File Handling Example</h5>
+                        <div class="code-snippet">
+                            <pre>
+# Writing to a file
+with open("example.txt", "w") as f:
+    f.write("Hello, world!\n")
+    f.write("This is a test file.")
+
+# Reading from a file
+try:
+    with open("example.txt", "r") as f:
+        content = f.read()
+        print(content)
+except FileNotFoundError:
+    print("The file does not exist!")
+</pre>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="badge bg-danger mb-2">Advanced</span>
+                                <span class="badge bg-secondary mb-2">60 minutes</span>
+                            </div>
+                            <button class="btn btn-secondary download-btn" disabled>
+                                <i class='bx bx-time me-2'></i> Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Handle active class on navigation links
+    document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('.lecture-link');
+        
+        links.forEach(link => {
+            link.addEventListener('click', function(e) {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Update active link based on scroll position
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('[id^="lecture"]');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 200;
+                if (window.pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

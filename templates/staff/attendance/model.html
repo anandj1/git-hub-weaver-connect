@@ -1,0 +1,141 @@
+
+{% extends 'layouts/staff.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="text-primary">{{ title }}</h2>
+    </div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-12">
+        <form action="{% url 'st-att-model' %}" class="row" method="post">
+            {% csrf_token %}
+            <div class="form-group col-md-4 mb-3">
+                <select name="day_type" id="day_type" class="form-control" required>
+                    <option value="">Day Type</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Bonus">Bonus</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4 mb-3">
+                <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row my-3">
+    <div class="col-md-12">
+        <div class="mb-3">
+            <input type="text" id="searchAttendance" class="form-control" placeholder="Search by day or date...">
+        </div>
+        <div class="mb-3">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active filter-btn" data-filter="all">All</button>
+                <button type="button" class="btn btn-outline-primary filter-btn" data-filter="Regular">Regular</button>
+                <button type="button" class="btn btn-outline-primary filter-btn" data-filter="Bonus">Bonus</button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Date</th>
+                        <th>Conduct</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for x in att_models %}
+                    <tr class="attendance-row" data-day="{{ x.day }}">
+                        <td>{{ x.day }}</td>
+                        <td>{{ x.date }}</td>
+                        <td>
+                            <a href="{% url 'st-att-conduct' x.id %}" class="btn btn-success btn-sm"><i class='bx bx-calendar'></i> Conduct Attendance</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('searchAttendance');
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.attendance-row');
+            
+            rows.forEach(row => {
+                const day = row.querySelector('td:first-child').textContent.toLowerCase();
+                const date = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                
+                if (day.includes(searchTerm) || date.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Filter buttons
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const rows = document.querySelectorAll('.attendance-row');
+                
+                rows.forEach(row => {
+                    if (filter === 'all') {
+                        row.style.display = '';
+                    } else {
+                        const dayType = row.dataset.day;
+                        if (dayType === filter) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Get CSRF token for AJAX requests
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+        
+        // Setup CSRF token for all AJAX requests
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add CSRF token to all AJAX requests
+            const xhrSend = XMLHttpRequest.prototype.send;
+            XMLHttpRequest.prototype.send = function() {
+                this.setRequestHeader('X-CSRFToken', csrftoken);
+                return xhrSend.apply(this, arguments);
+            };
+        });
+    });
+</script>
+{% endblock %}

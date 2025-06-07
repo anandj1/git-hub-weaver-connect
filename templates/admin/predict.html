@@ -1,0 +1,150 @@
+
+{% extends 'layouts/admin.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="text-primary">{{ title }}</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Train Dataset</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-info mb-3">
+                    <i class="bx bx-info-circle me-1"></i> Training the dataset will analyze student participation patterns and help predict student engagement.
+                </p>
+                <form action="{% url 'su-train' %}" method="post" id="training-form">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="training_options">Training Options</label>
+                        <select class="form-control mb-3" id="training_options" name="training_options">
+                            <option value="all">All Data</option>
+                            <option value="recent">Recent Activity (Last 30 Days)</option>
+                            <option value="high_engagement">High Engagement Activities</option>
+                        </select>
+                    </div>
+                    <div class="progress mb-3" id="training-progress" style="display: none;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <button type="button" class="btn btn-primary" id="train-btn">
+                            <i class="bx bx-cog me-1"></i> Train the Dataset
+                        </button>
+                    </div>
+                </form>
+                <div class="alert alert-success mt-3" id="training-success" style="display: none;">
+                    <i class="bx bx-check-circle me-1"></i> Training completed successfully!
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">New Prediction</h6>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'su-predict' %}" method="post" id="prediction-form">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="coin">Student Participation Coins</label>
+                        <input type="number" name="coin" placeholder="Enter coin count" autocomplete="off" required id="coin" class="form-control" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="days">Time Period (Days)</label>
+                        <input type="number" name="days" placeholder="Enter days" autocomplete="off" required id="days" class="form-control" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bx bx-search-alt me-1"></i> Predict Student
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Prediction Results</h6>
+            </div>
+            <div class="card-body">
+                {% if student %}
+                <div class="alert alert-success">
+                    <i class="bx bx-user-voice me-2"></i> {{ student }}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="bx bx-info-circle me-2"></i> Enter parameters above and submit to see prediction results
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Training progress simulation
+        const trainBtn = document.getElementById('train-btn');
+        const progressBar = document.querySelector('#training-progress .progress-bar');
+        const progressContainer = document.getElementById('training-progress');
+        const successAlert = document.getElementById('training-success');
+        const trainingForm = document.getElementById('training-form');
+        
+        if (trainBtn) {
+            trainBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                progressContainer.style.display = 'flex';
+                trainBtn.disabled = true;
+                
+                let progress = 0;
+                const interval = setInterval(function() {
+                    progress += 5;
+                    progressBar.style.width = progress + '%';
+                    progressBar.setAttribute('aria-valuenow', progress);
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        successAlert.style.display = 'block';
+                        
+                        // Submit the form after showing success
+                        setTimeout(function() {
+                            trainingForm.submit();
+                        }, 1000);
+                    }
+                }, 150);
+            });
+        }
+        
+        // Form validation
+        const predictionForm = document.getElementById('prediction-form');
+        if (predictionForm) {
+            predictionForm.addEventListener('submit', function(e) {
+                const coinInput = document.getElementById('coin');
+                const daysInput = document.getElementById('days');
+                
+                if (!coinInput.value || isNaN(coinInput.value) || parseInt(coinInput.value) < 0) {
+                    e.preventDefault();
+                    alert('Please enter a valid positive number for coins');
+                    return;
+                }
+                
+                if (!daysInput.value || isNaN(daysInput.value) || parseInt(daysInput.value) < 1) {
+                    e.preventDefault();
+                    alert('Please enter a valid positive number for days');
+                    return;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
