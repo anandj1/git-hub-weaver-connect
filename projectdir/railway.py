@@ -3,7 +3,7 @@ import os
 
 # Production settings
 DEBUG = False
-SECRET_KEY = os.environ.get('SECRET_KEY', '3ogf9n1&zvyaetvw#(tq9*pz#0@_=7r_p0o2e4a!mpa*50()8q')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # Database for Railway
 DATABASES = {
@@ -24,5 +24,5 @@ DATABASES = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Allowed hosts
-ALLOWED_HOSTS = ['*']  # Railway will provide the domain
+# Railway domain
+ALLOWED_HOSTS = ['*']

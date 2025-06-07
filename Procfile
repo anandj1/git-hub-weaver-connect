@@ -1,1 +1,1 @@
-web: gunicorn projectdir.wsgi:application
+web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:$PORT projectdir.wsgi:application --settings=projectdir.railway

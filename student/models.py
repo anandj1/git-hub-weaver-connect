@@ -1,5 +1,3 @@
-from operator import mod
-from tkinter.tix import Tree
 from django.db import models
 from account.models import Profile
 from staff.models import Quiz, QuizQA, ClassRoomDiscussion, Staff, Attendance
